@@ -2,6 +2,7 @@ import { useLanguage } from "@/components/language-provider";
 import { Button } from "@/components/ui/button";
 import { dnsAuthDescriptions, getDnsAuthItemClass } from "./utils";
 import { ROW_GRID, StatusBadge, StatusRow } from "./status-row";
+import CloudflareManualSetup from "./CloudflareManualSetup";
 import CloudflareReceivingConfig from "./CloudflareReceivingConfig";
 import ReceivingSetupSection from "./ReceivingSetupSection";
 import SendingSetupSection from "./SendingSetupSection";
@@ -71,10 +72,13 @@ export default function DomainDnsDetails({
 	};
 
 	const cloudflareConfig = (
-		<ul className="space-y-2">
-			<StatusRow ok={!!sendingOk} title={t("domains.emailSending")} hint={t("domains.emailSendingHint")}>{sendingLabel}</StatusRow>
-			{auditRow("dkim")}
-		</ul>
+		<div>
+			<ul className="space-y-2">
+				<StatusRow ok={!!sendingOk} title={t("domains.emailSending")} hint={t("domains.emailSendingHint")}>{sendingLabel}</StatusRow>
+				{auditRow("dkim")}
+			</ul>
+			<CloudflareManualSetup domainName={domain.hostname} />
+		</div>
 	);
 
 	const cloudflareReceiving = (
