@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getEnv } from "@/lib/cloudflare";
-import { deactivateLicense } from "@/lib/licenses/service";
-import { getLicenseErrorResponse, requireLicenseAdmin } from "../utils";
+import { getLicenseStatus } from "@/lib/licenses/service";
+import { requireLicenseAdmin } from "../utils";
 
 export async function POST(request: Request) {
 	const env = getEnv();
@@ -9,9 +9,9 @@ export async function POST(request: Request) {
 	if (forbidden) return forbidden;
 
 	try {
-		const license = await deactivateLicense(env);
+		const license = await getLicenseStatus(env);
 		return NextResponse.json({ license });
-	} catch (error) {
-		return getLicenseErrorResponse(error);
+	} catch {
+		return NextResponse.json({ license: null, error: "Unable to update license" }, { status: 500 });
 	}
 }

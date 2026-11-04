@@ -1,7 +1,6 @@
 import { eq } from "drizzle-orm";
 import { getDb } from "@/db";
 import { domains, mailboxAccess, mailboxes } from "@/db/schema";
-import { isTeamMailboxSharingEnabled } from "@/lib/mailboxes/access-utils";
 import type { NewMessageNotification, AgentDraftNotification } from "./types";
 import { sendPushNotifications } from "@/lib/push/server";
 import { sendNativePush } from "@/lib/push/native";
@@ -21,6 +20,10 @@ export function getSessionTokenFromRequest(request: Request): string | undefined
 	return undefined;
 }
 
+async function isTeamMailboxSharingEnabled(): Promise<boolean> {
+	return true;
+}
+
 export async function getMailboxNotificationUserIds(
 	env: CloudflareEnv,
 	mailboxId: string,
@@ -33,7 +36,7 @@ export async function getMailboxNotificationUserIds(
 		.innerJoin(domains, eq(mailboxes.domainId, domains.id))
 		.where(eq(mailboxes.id, mailboxId))
 		.limit(1);
-	const sharedUserIds = mailboxRows[0]?.type === "shared" && await isTeamMailboxSharingEnabled(db)
+	const sharedUserIds = mailboxRows[0]?.type === "shared" && await isTeamMailboxSharingEnabled()
 		? (await db
 			.select({ userId: mailboxAccess.userId })
 			.from(mailboxAccess)

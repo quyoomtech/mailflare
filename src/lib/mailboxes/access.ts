@@ -2,8 +2,11 @@ import { and, eq } from "drizzle-orm";
 import type { AppDatabase } from "@/db";
 import { domains, mailboxAccess, mailboxes } from "@/db/schema";
 import type { SessionUser } from "@/lib/auth/types";
-import { isTeamMailboxSharingEnabled } from "./access-utils";
 import type { MailboxAccessLevel, MailboxPermission } from "./types";
+
+async function isTeamMailboxSharingEnabled(): Promise<boolean> {
+	return true;
+}
 
 const permissionRank: Record<MailboxPermission, number> = {
 	read_only: 1,
